@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en" data-bs-theme="auto">
+
+<head>
+    <script src="js/color-modes.js"></script>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Projet VueJS-1 Bootstrap v5.3</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+        }
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+
+        .b-example-divider {
+            width: 100%;
+            height: 3rem;
+            background-color: rgba(0, 0, 0, .1);
+            border: solid rgba(0, 0, 0, .15);
+            border-width: 1px 0;
+            box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
+        }
+
+        .b-example-vr {
+            flex-shrink: 0;
+            width: 1.5rem;
+            height: 100vh;
+        }
+
+        .bi {
+            vertical-align: -.125em;
+            fill: currentColor;
+        }
+
+        .nav-scroller {
+            position: relative;
+            z-index: 2;
+            height: 2.75rem;
+            overflow-y: hidden;
+        }
+
+        .nav-scroller .nav {
+            display: flex;
+            flex-wrap: nowrap;
+            padding-bottom: 1rem;
+            margin-top: -1px;
+            overflow-x: auto;
+            text-align: center;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .btn-bd-primary {
+            --bd-violet-bg: #712cf9;
+            --bd-violet-rgb: 112.520718, 44.062154, 249.437846;
+
+            --bs-btn-font-weight: 600;
+            --bs-btn-color: var(--bs-white);
+            --bs-btn-bg: var(--bd-violet-bg);
+            --bs-btn-border-color: var(--bd-violet-bg);
+            --bs-btn-hover-color: var(--bs-white);
+            --bs-btn-hover-bg: #6528e0;
+            --bs-btn-hover-border-color: #6528e0;
+            --bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
+            --bs-btn-active-color: var(--bs-btn-hover-color);
+            --bs-btn-active-bg: #5a23c8;
+            --bs-btn-active-border-color: #5a23c8;
+        }
+
+        .bd-mode-toggle {
+            z-index: 1500;
+        }
+
+        body {
+            min-height: 75rem;
+            padding-top: 4.5rem;
+        }
+</style>
+
+</head>
+
+<body>
+    <div id="app" v-cloak>
+        <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-info">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">VENTE CRUD </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
+                    aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                        <li class="nav-item">
+                            <a class="nav-link" v-bind:class="{active:showHome}" aria-current="page" href="#"
+                                @click.prevent="goToHome()">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" v-bind:class="{ active:showListVente||showForms }" href="#"
+                                @click.prevent="goToListe()">Liste des Ventes</a>
+                        </li>
+
+                    </ul>
+                    <form class="d-flex" role="search" @submit.prevent="recherche()">
+                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" v-model="this.dsgn">
+                        <button class="btn btn-outline-success" type="submit">Search</button>
+                    </form>
+                </div>
+            </div>
+        </nav>
+
+        <main class="container">
+            <div class="bg-body-tertiary p-5 rounded" v-if="showHome">
+                <h1>CRUD Vente Manager</h1>
+                <p class="lead">This example is a quick exercise to illustrate how fixed to top navbar works. As you
+                    scroll,
+                    it will remain fixed to the top of your browser’s viewport.</p>
+
+            </div>
+            <div class="row mt-5" v-if="showForms || showListVente || showModifier">
+                <div class="col">
+                    <div class="card">
+                        <div class="card-header text-black bg-info">Gestion des Ventes</div>
+                        <div class="card-body">
+        
+        
+  <!-- ##########################################################################formulaire de enregistrement -->
+                            <div class="mb-4" v-if="showForms">
+                                <div class="d-flex mb-2">
+                                    <h5 class="card-title flex-grow-1">Formulaires de création</h5>
+                                </div>
+                                <form @submit.prevent="ajouterVente()">
+                                    <div class="row g-3">
+                                        <div class="col">
+                                            <div class="form-floating mb-3">
+                                                <input v-model="newVente.numPro" required type="text"
+                                                    class="form-control" id="floatingInput" placeholder="Design">
+                                                <label for="floatingInput">Numero Produit</label>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-floating">
+                                                <input v-model="newVente.design" required type="text"
+                                                    class="form-control" id="floatingPassword" placeholder="Prix">
+                                                <label for="floatingPrix">Design</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row g-3">
+                                        <div class="col">
+                                            <div class="form-floating mb-3">
+                                                <input v-model.number="newVente.prix" required type="text" class="form-control"
+                                                    id="floatingInput" placeholder="Quantité">
+                                                <label for="floatingInput">Prix</label>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-floating">
+                                                <input v-model="newVente.qte" required type="text" class="form-control"
+                                                    id="floating" placeholder="text">
+                                                <label for="floatingDate">Quantité</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <button type="submit" class="btn btn-success">Enregistrer</button>
+                                        <button type="button" class="btn btn-danger ms-2"
+                                            @click.prevent="goToListe()">Retour</button>
+                                    </div>
+                                </form>
+                            </div>
+
+
+<!-- ##########################################################################formulaire de enregistrement -->                            
+                            <!-- formulaire de modification -->
+                            <div class="mb-4" v-if="showModifier">
+                                <div class="d-flex mb-2">
+                                    <h5 class="card-title flex-grow-1">Formulaires de création</h5>
+                                </div>
+                                <form @submit.prevent="modifierVente()">
+                                    <div class="row g-3">
+                                        <div class="col">
+                                            <div class="form-floating mb-3">
+                                                <input required type="text" v-model="modVente.numPro"
+                                                    class="form-control" id="num">
+                                                <label for="floatingInput">Numero Produit</label>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-floating">
+                                                <input  required type="text" v-model="modVente.design"
+                                                    class="form-control" id="design">
+                                                <label for="floatingPrix">Design</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row g-3">
+                                        <div class="col">
+                                            <div class="form-floating mb-3">
+                                                <input  required type="text" class="form-control" v-model="modVente.prix"
+                                                    id="prix">
+                                                <label for="floatingInput">Prix</label>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-floating">
+                                                <input required type="text" class="form-control" v-model="modVente.qte"
+                                                    id="qte">
+                                                <label for="floatingDate">Quantité</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <button type="submit" class="btn btn-success">Modifier</button>
+                                        <button type="button" class="btn btn-danger ms-2"
+                                            @click.prevent="goToListe()">Retour</button>
+                                    </div>
+                                </form>
+                            </div>
+                            
+                            
+
+ <!-- ##########################################################################formulaire de enregistrement -->                           
+                            <!-- tableau liste des ventes -->
+                            <div v-if="showListVente">
+                                <div class="d-flex mb-2">
+                                    <h5 class="card-title flex-grow-1">Liste des Ventes</h5>
+                                    <div class="d-flex">
+                                        <a href="#" class="btn btn-outline-success" @click.prevent="goToForms()">
+                                            Ajouter </a>
+                                    </div>
+                                </div>
+                                <div>
+                                    <table class="table table-bordered table-hover">
+                                        <thead>
+                                            <tr class="table-info">
+                                                <th scope="col">Num</th>
+                                                <th scope="col">Designation</th>
+                                                <th scope="col">Prix</th>
+                                                <th scope="col">Quantité</th>
+                                                <th scope="col">Montant</th>
+                                                <th scope="col">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="item in tableau">
+                                                <td>{{item.numPro}}</td>
+                                                <td>{{item.design}}</td>
+                                                <td>{{item.prix}}</td>
+                                                <td>{{item.qte}}</td>
+                                                <td>{{item.prix*item.qte}}</td>
+                                                <td>
+                                                    <button type="button" class="btn btn-success"
+                                                        @click.prevent="setModif(item)" data-bs-toggle="modal">
+                                                        <img src="img/pencil-square.svg">
+                                                    </button>
+                                                    <button type="button" class="btn btn-danger ms-2"
+                                                        data-bs-toggle="modal" @click.prevent="deleteDB(item)">
+                                                        <img src="img/trash3.svg">
+                                                    </button>
+                                                </td>
+
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <div class="d-flex mb-2">
+
+                                        <div class="ms-5">
+                                            <h6>Prix Minimal: </h6>{{prixMin()}} Ar
+                                        </div>
+                                        <div class="ms-5">
+                                            <h6>Prix Maximal: </h6>{{prixMax()}} Ar
+                                        </div>
+                                        <div class="ms-5">
+                                            <h6>Montant Total: </h6>{{sumMontant()}} Ar
+                                        </div>
+
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+
+    <script src="js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        crossorigin="anonymous"></script>
+    <script src="vue@3.3.4global.js"></script>
+    <script src="api.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
